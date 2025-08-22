@@ -1,5 +1,5 @@
 const express = require('express')
-const { default: mongoose } = require('mongoose')
+const mongoose = require('mongoose')
 const dotenv = require('dotenv')
 const routes = require('./routes/routes')
 const bodyParser = require('body-parser')
