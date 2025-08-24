@@ -52,7 +52,7 @@ const loginUser = async(req, res) => {
       })
     }
 
-    const result = await UserService.loginUser({ email, password })
+    const result = await UserService.loginUser(email, password)
     return res.status(200).json(result)
   } catch (error) {
       return res.status(500).json({
@@ -72,7 +72,7 @@ const updateUser = async(req, res) => {
         message: 'The userId is required'
       })
     }
-    const result = await UserService.updateUser({ userId, data })
+    const result = await UserService.updateUser(userId, data)
     return res.status(200).json(result)
   } catch (error) {
       return res.status(500).json({
@@ -91,7 +91,7 @@ const deleteUser = async(req, res) => {
         message: 'The userId is required'
       })
     }
-    const result = await UserService.deleteUser({ userId })
+    const result = await UserService.deleteUser(userId)
     return res.status(200).json(result)
   } catch (error) {
       return res.status(500).json({
@@ -122,7 +122,7 @@ const getDetailsUser = async(req, res) => {
         message: 'The userId is required'
       })
     }
-    const result = await UserService.getDetailsUser({ userId })
+    const result = await UserService.getDetailsUser(userId)
     return res.status(200).json(result)
   } catch (error) {
       return res.status(500).json({

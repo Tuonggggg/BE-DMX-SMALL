@@ -2,33 +2,41 @@ const User = require('../models/UserModel')
 const bcrypt = require('bcrypt')
 const { genneralAccessToken, genneralRefreshToken } = require('./JwtService')
 
-const createUser = (newUser) => {
-  return new Promise(async (resolve, reject) => {
+const createUser = async (newUser) => {
+  try {
     const { name, email, password, phone } = newUser
-    try {
-      const checkUser = await User.findOne({ email })
-      if (checkUser) {
-        return resolve({
-          status: 'ERROR',
-          message: 'Email already exists'
-        })
+
+    // check email đã tồn tại
+    const checkUser = await User.findOne({ email })
+    if (checkUser) {
+      return {
+        status: 'ERROR',
+        message: 'Email already exists'
       }
-      const hash = bcrypt.hashSync(password, 10)
-      const createdUser = await User.create({
-        name,
-        email,
-        password: hash,
-        phone
-      })
-      resolve({
-        status: 'OK',
-        message: 'User created successfully',
-        data: createdUser
-      })
-    } catch (error) {
-      reject(error)
     }
-  })
+
+    // hash password
+    const hash = bcrypt.hashSync(password, 10)
+
+    // tạo user
+    const createdUser = await User.create({
+      name,
+      email,
+      password: hash,
+      phone
+    })
+
+    return {
+      status: 'OK',
+      message: 'User created successfully',
+      data: createdUser
+    }
+  } catch (error) {
+    return {
+      status: 'ERROR',
+      message: error.message
+    }
+  }
 }
 
 const loginUser = (userLogin) => {
@@ -72,7 +80,7 @@ const loginUser = (userLogin) => {
   })
 }
 
-const updateUser = ({ userId, data }) => {
+const updateUser = (userId, data) => {
   return new Promise(async (resolve, reject) => {
     try {
       const checkUser = await User.findById(userId)
@@ -81,6 +89,9 @@ const updateUser = ({ userId, data }) => {
           status: 'ERROR',
           message: 'User not found'
         })
+      }
+      if (data.password) {
+      data.password = bcrypt.hashSync(data.password, 10)
       }
 
       const updatedUser = await User.findByIdAndUpdate(userId, data, { new: true })
@@ -96,7 +107,7 @@ const updateUser = ({ userId, data }) => {
   })
 }
 
-const deleteUser = ({ userId }) => {
+const deleteUser = (userId) => {
   return new Promise(async (resolve, reject) => {
     try {
       const checkUser = await User.findById(userId)
@@ -132,7 +143,7 @@ const getAllUser = async () => {
   }
 }
 
-const getDetailsUser = ({ userId }) => {
+const getDetailsUser = (userId) => {
   return new Promise(async (resolve, reject) => {
     try {
       const user = await User.findById(userId)
